@@ -137,12 +137,11 @@
 			        var y = acceleration.y;
 			        var z = acceleration.z;
 			        var speed = Math.abs(x + y + z - this.last_x - this.last_y - this.last_z) / diffTime * 10000;
-	                if(speed > SHAKE_THRESHOLD) {
+	                if(speed > this.SHAKE_THRESHOLD) {
 	                    var oBottom = document.getElementsByClassName('bottom')[0];
 	                    var oTop = document.getElementsByClassName('top')[0];
 	                    oBottom.className += ' move-down';
 	                    oTop.className += ' move-down';
-	                    window.removeEventListener('devicemotion', deviceMotionHeadler);
 	                }
 	                // 更新时间和重力加速度
 			        this.last_update = curTime;
