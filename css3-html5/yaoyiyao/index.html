@@ -12,11 +12,10 @@
 			background: #DB5344;
 		}
 		.main {
-			margin: 0 auto;
+			margin: 50px auto 50px;
 			width: 600px;
 		}
 		.title {
-			margin-top: 50px;
 			position: relative;
 			width: 600px;
 			text-align: center;
@@ -34,7 +33,7 @@
 			top: 550px;
 			padding-top: 10px;
 			width: 600px;
-			height: 1080px;
+			height: 880px;
 			background: #ce2729;
 			overflow: hidden;
 			z-index: -2;
@@ -79,7 +78,7 @@
 			position: absolute;
 			top: 0;
 			width: 600px;
-			height: 1080px;
+			height: 880px;
 			background: #ce2729;
 			transition: all 1s;
 		}
@@ -185,6 +184,9 @@
 					that = this;
 				this.lastPointX = touch.clientX - left;
 				this.lastPointY = touch.clientY - top;
+				this.canvas.addEventListener('touchmove', touchmoveHandle, false);
+				document.addEventListener('touchend', touchendHandle, false);
+				e.preventDefault();
 				function touchmoveHandle(e) {
 					var touch = event.targetTouches[0];
 					var nowPointX = touch.clientX - left;
@@ -197,14 +199,13 @@
 					that.ctx.stroke();
 					that.lastPointX = nowPointX;
 					that.lastPointY = nowPointY;
+					e.preventDefault();
 				}
 				function touchendHandle() {
 					that.canvas.removeEventListener('touchmove', touchmoveHandle);
 					document.removeEventListener('touchend', touchendHandle);
 					that.clearAll();
 				}
-				this.canvas.addEventListener('touchmove', touchmoveHandle, false);
-				document.addEventListener('touchend', touchendHandle, false);
 			},
 			
 			init: function () {
