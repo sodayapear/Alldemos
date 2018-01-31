@@ -137,7 +137,6 @@
 			        var y = acceleration.y;
 			        var z = acceleration.z;
 			        var speed = Math.abs(x + y + z - this.last_x - this.last_y - this.last_z) / diffTime * 10000;
-			        alert(speed);
 	                if(speed > this.SHAKE_THRESHOLD) {
 	                    var oBottom = document.getElementsByClassName('bottom')[0];
 	                    var oTop = document.getElementsByClassName('top')[0];
