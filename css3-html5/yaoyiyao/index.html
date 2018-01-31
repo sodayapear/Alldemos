@@ -1,0 +1,217 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+	<meta charset="UTF-8">
+	<title>Document</title>
+	<style>
+		* {
+			margin: 0;
+			padding: 0;
+		}
+		body {
+			background: #DB5344;
+		}
+		.main {
+			margin: 0 auto;
+			width: 200px;
+		}
+		.title {
+			margin-top: 30px;
+			position: relative;
+			width: 200px;
+			height: 220px;		
+			text-align: center;
+		}
+		.title img {
+			position: absolute;
+			top: 0px;
+			left: 25px;
+			width: 150px;
+			height: 150px;
+		}
+		.title h1 {
+			position: absolute;
+			top: 160px;
+		}
+		.enve-wrapper h2 {
+			position: absolute;
+			top: 100px;
+			left: 40px;
+			font-size: 50px;
+			color: #ff9c32;
+			z-index: -1;
+		}
+		.enve-wrapper {
+			position: absolute;
+			top: 250px;
+			padding-top: 10px;
+			width: 200px;
+			height: 280px;
+			background: #ce2729;
+			overflow: hidden;
+			z-index: -2;
+			text-align: center;
+
+		}
+		.enve-wrapper .top {
+			position: absolute;
+			height: 200px;
+			top: -100px;
+			width: 200px;
+			border-radius: 50%;
+			background: #b20202;
+			transition: all 1s;
+
+		}
+		.enve-wrapper .bottom {
+			position: absolute;
+			top: 0;
+			width: 200px;
+			height: 280px;
+			background: #ce2729;
+			transition: all 1s;
+		}
+		.enve-wrapper .open {
+			position: absolute;
+			top: 150px;
+			left: 50px;
+			width: 100px;
+			height: 100px;
+			border-radius: 50%;
+			background-color: #ff9c32;
+		}
+		.enve-wrapper .open span {
+			position: absolute;
+			left: 50%;
+			top: 50%;
+			transform: translateX(-50%) translateY(-50%);
+			font-size: 50px;
+		}
+		.enve-wrapper #cover {
+			position: absolute;
+			top: 100px;
+			left: 20px;
+
+		}
+		.move-up {
+			transform: translateY(-100%);
+		}
+		.move-down {
+			transform: translateY(100%);
+		}
+	</style>
+</head>
+<body>
+	<div class="main">
+		<div class="title">
+			<img src="./shake.png" alt="">
+			<h1>摇一摇领红包</h1>
+		</div>
+		<div class="enve-wrapper">
+			<h3>刮开查看</h3>
+			<h2 id="money-text">20元</h2>
+			<canvas id="cover" width=80 height=60></canvas>
+			<div class="bottom"></div>
+			<div class="top">
+				<div class="open">
+					<span>开</span>
+				</div>
+			</div>
+		</div>
+	</div>
+	<script>
+		({
+			SHAKE_THRESHOLD : 800,
+	        last_update : 0,
+	        last_x : 0, 
+	        last_y : 0, 
+	        last_z : 0,
+	        deviceMotionHeadler : function(eventData) {
+	            var acceleration = eventData.accelerationIncludingGravity;
+			    var curTime = new Date().getTime();  //获取当前时间
+		        var diffTime = curTime - this.last_update;
+			    // 时间间隔300以上再判断
+			    if(diffTime > 300) {
+			    	// 根据上述公式计算结果
+			        var x = acceleration.x;
+			        var y = acceleration.y;
+			        var z = acceleration.z;
+			        var speed = Math.abs(x + y + z - this.last_x - this.last_y - this.last_z) / diffTime * 10000;
+	                if(speed > SHAKE_THRESHOLD) {
+	                    var oBottom = document.getElementsByClassName('bottom')[0];
+	                    var oTop = document.getElementsByClassName('top')[0];
+	                    oBottom.className += 'mousedown';
+	                    oTop.className += 'mouseup';
+	                    window.removeEventListener('devicemotion', deviceMotionHeadler);
+	                }
+	                // 更新时间和重力加速度
+			        this.last_update = curTime;
+			        this.last_x = x;
+			        this.last_y = y;
+			        this.last_z = z;
+	            }
+	        },
+        
+			getMoney: function () {
+				var num = Math.floor(Math.random() * 100) + 1;
+				return num;
+			},
+			clearAll: function () {
+				var d = this.ctx.getImageData(0, 0, this.w, this.h).data,
+					len = d.length,
+					count = 0;
+				for (var i = 0; i < len; i += 4) {
+					if (d[i] === 0) {
+						count ++;
+					}
+				}
+				if (count > this.w * this.h * 0.7) {
+					this.ctx.clearRect(0, 0, this.w, this.h);
+				}
+			},
+			mousedownHandle: function (e) {
+				var pos = this.canvas.getBoundingClientRect(),
+					left = pos.left,
+					top = pos.top,
+					that = this;
+				this.lastPointX = e.clientX - left;
+				this.lastPointY = e.clientY - top;
+				function mousemoveHandle(e) {
+					var nowPointX = e.clientX - left;
+					var nowPointY = e.clientY - top;
+					that.ctx.beginPath();
+					that.ctx.lineCap = 'round';
+					that.ctx.lineWidth = 10;
+					that.ctx.moveTo(that.lastPointX, that.lastPointY);
+					that.ctx.lineTo(nowPointX, nowPointY);
+					that.ctx.stroke();
+					that.lastPointX = nowPointX;
+					that.lastPointY = nowPointX;
+				}
+				function mouseupHandle() {
+					that.canvas.removeEventListener('mousemove', mousemoveHandle);
+					document.removeEventListener('mouseup', mouseupHandle);
+					that.clearAll();
+				}
+				this.canvas.addEventListener('mousemove', mousemoveHandle, false);
+				document.addEventListener('mouseup', mouseupHandle, false);
+			},
+			
+			init: function () {
+				var oText = document.getElementById('money-text');
+				oText.innerHTML = this.getMoney() + '元';
+				this.canvas = document.getElementById('cover'),
+				this.ctx = this.canvas.getContext('2d'),
+				this.w = this.canvas.width,
+				this.h = this.canvas.height,
+				this.ctx.fillStyle = '#ccc';
+				this.ctx.fillRect(0, 0, this.w, this.h);
+				this.ctx.globalCompositeOperation = 'destination-out';
+				this.canvas.addEventListener('mousedown', this.mousedownHandle.bind(this), false);
+		        window.addEventListener('devicemotion', this.deviceMotionHeadler, false);
+			}
+
+		}.init())
+	</script>
+</body>
+</html>
