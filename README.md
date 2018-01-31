@@ -8,6 +8,6 @@
 
 ## CSS3、HTML5
 
-- canvas实现背景图片中部高斯模糊：https://sodayapear.github.io/Alldemos/gaussian-blur-background/yaoyiyao/index.html
+- canvas实现背景图片中部高斯模糊：https://sodayapear.github.io/Alldemos/css3-html5/gaussian-blur-background/index.html
 - 手机摇一摇领红包和刮刮乐查看红包金额：https://sodayapear.github.io/Alldemos/css3-html5/yaoyiyao/index.html
 
