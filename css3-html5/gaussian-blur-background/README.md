@@ -1,7 +1,5 @@
 # canvas实现图片高斯模糊
 
-[TOC]
-
 ## 思路
 
 1. 利用了canvas的ctx.getImageData方法，获取了图片中间的部分的数据
