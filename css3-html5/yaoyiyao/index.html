@@ -140,8 +140,8 @@
 	                if(speed > SHAKE_THRESHOLD) {
 	                    var oBottom = document.getElementsByClassName('bottom')[0];
 	                    var oTop = document.getElementsByClassName('top')[0];
-	                    oBottom.className += 'mousedown';
-	                    oTop.className += 'mouseup';
+	                    oBottom.className += ' move-down';
+	                    oTop.className += ' move-down';
 	                    window.removeEventListener('devicemotion', deviceMotionHeadler);
 	                }
 	                // 更新时间和重力加速度
@@ -153,7 +153,7 @@
 	        },
         
 			getMoney: function () {
-				var num = Math.floor(Math.random() * 100) + 1;
+				var num = Math.floor(Math.random() * 90) + 10;
 				return num;
 			},
 			clearAll: function () {
@@ -179,14 +179,16 @@
 				function mousemoveHandle(e) {
 					var nowPointX = e.clientX - left;
 					var nowPointY = e.clientY - top;
+					console.log(nowPointX + ',' + nowPointY)
+					console.log(that.lastPointX + ',' + that.lastPointY)
 					that.ctx.beginPath();
 					that.ctx.lineCap = 'round';
-					that.ctx.lineWidth = 10;
+					that.ctx.lineWidth = 5;
 					that.ctx.moveTo(that.lastPointX, that.lastPointY);
 					that.ctx.lineTo(nowPointX, nowPointY);
 					that.ctx.stroke();
 					that.lastPointX = nowPointX;
-					that.lastPointY = nowPointX;
+					that.lastPointY = nowPointY;
 				}
 				function mouseupHandle() {
 					that.canvas.removeEventListener('mousemove', mousemoveHandle);
@@ -208,7 +210,13 @@
 				this.ctx.fillRect(0, 0, this.w, this.h);
 				this.ctx.globalCompositeOperation = 'destination-out';
 				this.canvas.addEventListener('mousedown', this.mousedownHandle.bind(this), false);
-		        window.addEventListener('devicemotion', this.deviceMotionHeadler, false);
+				// onclick = function () {
+				// 	var oBottom = document.getElementsByClassName('bottom')[0];
+	   //                  var oTop = document.getElementsByClassName('top')[0];
+	   //                  oBottom.className += ' move-down';
+	   //                  oTop.className += ' move-up';
+				// };
+		        window.addEventListener('devicemotion', this.deviceMotionHeadler.bind(this), false);
 			}
 
 		}.init())
