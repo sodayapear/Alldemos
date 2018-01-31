@@ -13,51 +13,63 @@
 		}
 		.main {
 			margin: 0 auto;
-			width: 200px;
+			width: 600px;
 		}
 		.title {
-			margin-top: 30px;
+			margin-top: 50px;
 			position: relative;
-			width: 200px;
-			height: 220px;		
+			width: 600px;
 			text-align: center;
 		}
 		.title img {
-			position: absolute;
-			top: 0px;
-			left: 25px;
-			width: 150px;
-			height: 150px;
+			width: 300px;
+			height: 300px;
 		}
 		.title h1 {
-			position: absolute;
-			top: 160px;
-		}
-		.enve-wrapper h2 {
-			position: absolute;
-			top: 100px;
-			left: 40px;
-			font-size: 50px;
-			color: #ff9c32;
-			z-index: -1;
+			padding: 50px 0;
+			font-size: 60px;
 		}
 		.enve-wrapper {
 			position: absolute;
-			top: 250px;
+			top: 550px;
 			padding-top: 10px;
-			width: 200px;
-			height: 280px;
+			width: 600px;
+			height: 1080px;
 			background: #ce2729;
 			overflow: hidden;
 			z-index: -2;
 			text-align: center;
 
 		}
+		.enve-wrapper h3 {
+			padding-top: 30px;
+			font-size: 50px;
+
+		}
+		.enve-wrapper .money {
+			position: absolute;
+			left: 50%;
+			top: 50%;
+			transform: translateX(-50%) translateY(-50%);
+			font-size: 80px;
+			color: #ff9c32;
+			z-index: -1;
+		}
+		.enve-wrapper #cover {
+			position: absolute;
+			top: 0;
+			left: 0;
+			right: 0;
+			bottom: 0;
+			width: 100%;
+			height: 100%;
+
+		}
 		.enve-wrapper .top {
 			position: absolute;
-			height: 200px;
-			top: -100px;
-			width: 200px;
+			height: 600px;
+			top: -300px;
+			width: 600px;
 			border-radius: 50%;
 			background: #b20202;
 			transition: all 1s;
@@ -66,17 +78,17 @@
 		.enve-wrapper .bottom {
 			position: absolute;
 			top: 0;
-			width: 200px;
-			height: 280px;
+			width: 600px;
+			height: 1080px;
 			background: #ce2729;
 			transition: all 1s;
 		}
 		.enve-wrapper .open {
 			position: absolute;
-			top: 150px;
-			left: 50px;
-			width: 100px;
-			height: 100px;
+			top: 400px;
+			left: 150px;
+			width: 300px;
+			height: 300px;
 			border-radius: 50%;
 			background-color: #ff9c32;
 		}
@@ -85,14 +97,9 @@
 			left: 50%;
 			top: 50%;
 			transform: translateX(-50%) translateY(-50%);
-			font-size: 50px;
+			font-size: 100px;
 		}
-		.enve-wrapper #cover {
-			position: absolute;
-			top: 100px;
-			left: 20px;
-
-		}
+		
 		.move-up {
 			transform: translateY(-100%);
 		}
@@ -109,8 +116,10 @@
 		</div>
 		<div class="enve-wrapper">
 			<h3>刮开查看</h3>
-			<h2 id="money-text">20元</h2>
-			<canvas id="cover" width=80 height=60></canvas>
+			<div class="money">
+				<h2 id="money-text">20元</h2>
+				<canvas id="cover"></canvas>
+			</div>
 			<div class="bottom"></div>
 			<div class="top">
 				<div class="open">
@@ -168,34 +177,34 @@
 					this.ctx.clearRect(0, 0, this.w, this.h);
 				}
 			},
-			mousedownHandle: function (e) {
+			touchstartHandle: function (e) {
 				var pos = this.canvas.getBoundingClientRect(),
 					left = pos.left,
 					top = pos.top,
+					touch = event.targetTouches[0],
 					that = this;
-				this.lastPointX = e.clientX - left;
-				this.lastPointY = e.clientY - top;
-				function mousemoveHandle(e) {
-					var nowPointX = e.clientX - left;
-					var nowPointY = e.clientY - top;
-					console.log(nowPointX + ',' + nowPointY)
-					console.log(that.lastPointX + ',' + that.lastPointY)
+				this.lastPointX = touch.clientX - left;
+				this.lastPointY = touch.clientY - top;
+				function touchmoveHandle(e) {
+					var touch = event.targetTouches[0];
+					var nowPointX = touch.clientX - left;
+					var nowPointY = touch.clientY - top;
 					that.ctx.beginPath();
 					that.ctx.lineCap = 'round';
-					that.ctx.lineWidth = 5;
+					that.ctx.lineWidth = 20;
 					that.ctx.moveTo(that.lastPointX, that.lastPointY);
 					that.ctx.lineTo(nowPointX, nowPointY);
 					that.ctx.stroke();
 					that.lastPointX = nowPointX;
 					that.lastPointY = nowPointY;
 				}
-				function mouseupHandle() {
-					that.canvas.removeEventListener('mousemove', mousemoveHandle);
-					document.removeEventListener('mouseup', mouseupHandle);
+				function touchendHandle() {
+					that.canvas.removeEventListener('touchmove', touchmoveHandle);
+					document.removeEventListener('touchend', touchendHandle);
 					that.clearAll();
 				}
-				this.canvas.addEventListener('mousemove', mousemoveHandle, false);
-				document.addEventListener('mouseup', mouseupHandle, false);
+				this.canvas.addEventListener('touchmove', touchmoveHandle, false);
+				document.addEventListener('touchend', touchendHandle, false);
 			},
 			
 			init: function () {
@@ -203,18 +212,14 @@
 				oText.innerHTML = this.getMoney() + '元';
 				this.canvas = document.getElementById('cover'),
 				this.ctx = this.canvas.getContext('2d'),
+				this.canvas.width = this.canvas.offsetWidth;
+				this.canvas.height = this.canvas.offsetHeight;
 				this.w = this.canvas.width,
 				this.h = this.canvas.height,
 				this.ctx.fillStyle = '#ccc';
 				this.ctx.fillRect(0, 0, this.w, this.h);
 				this.ctx.globalCompositeOperation = 'destination-out';
-				this.canvas.addEventListener('mousedown', this.mousedownHandle.bind(this), false);
-				// onclick = function () {
-				// 	var oBottom = document.getElementsByClassName('bottom')[0];
-	   //                  var oTop = document.getElementsByClassName('top')[0];
-	   //                  oBottom.className += ' move-down';
-	   //                  oTop.className += ' move-up';
-				// };
+				this.canvas.addEventListener('touchstart', this.touchstartHandle.bind(this), false);
 		        window.addEventListener('devicemotion', this.deviceMotionHeadler.bind(this), false);
 			}
 
